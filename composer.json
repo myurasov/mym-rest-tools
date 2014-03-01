@@ -1,0 +1,27 @@
+{
+  "name": "myurasov/mym-orm-tools",
+  "description": "ORM Tools",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Mikhail Yurasov",
+      "email": "me@yurasov.me"
+    }
+  ],
+  "minimum-stability": "stable",
+  "require": {
+
+    "symfony/http-foundation": "~2.0",
+    "symfony/http-kernel": "~2.0",
+    "doctrine/common": "~2.0",
+    "silex/silex": "~1.0",
+    "jms/serializer": "~0.15.0",
+
+    "php": ">=5.3.3"
+  },
+  "autoload": {
+    "psr-0": {
+      "mym\\REST": "src/"
+    }
+  }
+}
