@@ -10,7 +10,7 @@ namespace mym\REST\ODM;
 use Doctrine\ODM\MongoDB\DocumentRepository;
 use mym\REST\RESTRepositoryInterface;
 
-class ODMRESTRepository extends DocumentRepository implements RESTRepositoryInterface
+class RESTRepository extends DocumentRepository implements RESTRepositoryInterface
 {
   protected $skip = 0;
   protected $limit = 100;

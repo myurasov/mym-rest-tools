@@ -9,9 +9,9 @@ namespace mym\REST\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-use mym\REST\RESTController;
+use mym\REST\AbstractRESTController;
 
-class ORMRESTController extends RESTController
+class RESTController extends AbstractRESTController
 {
   /**
    * @var EntityManager
@@ -19,7 +19,7 @@ class ORMRESTController extends RESTController
   protected $em;
 
   /**
-   * @var ORMRESTRepository
+   * @var RESTRepository
    */
   protected $repository;
 

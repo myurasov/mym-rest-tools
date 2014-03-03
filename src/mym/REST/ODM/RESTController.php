@@ -9,9 +9,9 @@ namespace mym\REST\ODM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
-use mym\REST\RESTController;
+use mym\REST\AbstractRESTController;
 
-class ODMRESTController extends RESTController
+class RESTController extends AbstractRESTController
 {
   /**
    * @var DocumentManager

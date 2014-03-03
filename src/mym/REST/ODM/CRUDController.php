@@ -6,7 +6,7 @@
  * @copyright 2014 Mikhail Yurasov <me@yurasov.me>
  */
 
-namespace mym\REST\ORM;
+namespace mym\REST\ODM;
 
 use Symfony\Component\HttpFoundation\Request;
 

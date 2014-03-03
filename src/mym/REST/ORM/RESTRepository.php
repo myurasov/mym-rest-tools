@@ -10,7 +10,7 @@ namespace mym\REST\ORM;
 use Doctrine\ORM\EntityRepository;
 use mym\REST\RESTRepositoryInterface;
 
-class ORMRESTRepository extends EntityRepository implements RESTRepositoryInterface
+class RESTRepository extends EntityRepository implements RESTRepositoryInterface
 {
   protected $skip = 0;
   protected $limit = 100;

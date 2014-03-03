@@ -14,7 +14,7 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-abstract class RESTController extends RESTControllerActions
+abstract class AbstractRESTController extends RESTControllerActions
 {
   /**
    * @var ObjectManager
