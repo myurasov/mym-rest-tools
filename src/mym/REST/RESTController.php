@@ -11,6 +11,7 @@ use mym\Util\Arrays;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -61,14 +62,16 @@ abstract class RESTController extends RESTControllerActions
    */
   public function getResourceAction(Request $request)
   {
+    // load resource
     $resource = $this->load($request->attributes->get('id'), true /* required */);
-    $this->response->setData($resource);
 
     // set last-modified header
     if (method_exists($resource, $this->modificationDateMethodName)) {
       $this->response->setLastModified(call_user_func($resource, $this->modificationDateMethodName));
     }
 
+    // return resource
+    $this->response->setData($resource);
     return $this->response;
   }
 
@@ -144,8 +147,12 @@ abstract class RESTController extends RESTControllerActions
     // save
     $this->om->flush($resource);
 
-    // return resource
-    $this->response->setData(array('message' => 'ok'));
+    //
+
+    $this->response->setData(array(
+        'message' => 'ok'
+      ));
+
     return $this->response;
   }
 
@@ -171,6 +178,16 @@ abstract class RESTController extends RESTControllerActions
 
     // save new
     $this->om->flush();
+
+    //
+
+    $this->response->setData(array(
+        'message' => 'ok'
+      ));
+
+    return $this->response;
+  }
+
   public function deleteCollectionAction(Request $request)
   {
     $this->deleteCollection();
