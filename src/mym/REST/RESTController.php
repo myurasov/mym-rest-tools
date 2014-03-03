@@ -11,7 +11,6 @@ use mym\Util\Arrays;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
@@ -60,7 +59,7 @@ abstract class RESTController extends RESTControllerActions
   /**
    * @inheritdoc
    */
-  public function getResourceAction(Request $request)
+  public function getResource(Request $request)
   {
     // load resource
     $resource = $this->load($request->attributes->get('id'), true /* required */);
@@ -75,7 +74,7 @@ abstract class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function createResourceAction(Request $request)
+  public function createResource(Request $request)
   {
     // create new resource
     $resource = $this->create();
@@ -92,7 +91,7 @@ abstract class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function updateOrCreateResourceAction(Request $request)
+  public function updateOrCreateResource(Request $request)
   {
     // load existing resource
     $resource = $this->load($request->attributes->get('id'), false /* not required */);
@@ -114,7 +113,7 @@ abstract class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function updateResourceAction(Request $request)
+  public function updateResource(Request $request)
   {
     // load existing resource
     $resource = $this->load($request->attributes->get('id'), true /* required */);
@@ -130,13 +129,13 @@ abstract class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function getCollectionAction(Request $request)
+  public function getCollection(Request $request)
   {
     $this->response->setData($this->search($request));
     return $this->response;
   }
 
-  public function deleteResourceAction(Request $request)
+  public function deleteResource(Request $request)
   {
     // load existing resource
     $resource = $this->load($request->attributes->get('id'), true /* required */);
@@ -156,7 +155,7 @@ abstract class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function replaceCollectionAction(Request $request)
+  public function replaceCollection(Request $request)
   {
     // insert new resources
 
@@ -174,7 +173,7 @@ abstract class RESTController extends RESTControllerActions
     }
 
     // delete all
-    $this->deleteCollection();
+    $this->deleteAll();
 
     // save new
     $this->om->flush();
@@ -188,9 +187,9 @@ abstract class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function deleteCollectionAction(Request $request)
+  public function deleteCollection(Request $request)
   {
-    $this->deleteCollection();
+    $this->deleteAll();
 
     //
 
@@ -207,7 +206,7 @@ abstract class RESTController extends RESTControllerActions
    * Delete all items in collection
    * Changes saved to database immideately
    */
-  abstract protected function deleteCollection();
+  abstract protected function deleteAll();
 
   /**
    * Create new instance of the resource
