@@ -17,11 +17,16 @@ class ORMRESTRepository extends EntityRepository implements RESTRepositoryInterf
 
   public function searchAll()
   {
-    return $this->createQueryBuilder('e')
+    return $this->createQueryBuilder('resources')
       ->setFirstResult($this->skip)
       ->setMaxResults($this->limit)
       ->getQuery()
       ->getResult();
+  }
+
+  public function searchByIds($ids = array())
+  {
+    return $this->findBy(array('id' => $ids), null, $this->limit, $this->skip);
   }
 
   public function setLimit($limit)
