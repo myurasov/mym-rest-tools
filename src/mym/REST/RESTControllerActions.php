@@ -16,6 +16,8 @@ abstract class RESTControllerActions
    * GET /collection/id
    *
    * @param Request $request
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function getResourceAction(Request $request)
   {
@@ -26,7 +28,8 @@ abstract class RESTControllerActions
    * PUT /collection/id
    *
    * @param Request $request
-   * @throws HttpNotImplementedException
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function updateOrCreateResourceAction(Request $request)
   {
@@ -49,7 +52,8 @@ abstract class RESTControllerActions
    * DELETE /collection/id
    *
    * @param Request $request
-   * @throws HttpNotImplementedException
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function deleteResourceAction(Request $request)
   {
@@ -60,7 +64,8 @@ abstract class RESTControllerActions
    * GET /collection
    *
    * @param Request $request
-   * @throws HttpNotImplementedException
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function getCollectionAction(Request $request)
   {
@@ -71,7 +76,8 @@ abstract class RESTControllerActions
    * PUT /collection
    *
    * @param Request $request
-   * @throws HttpNotImplementedException
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function replaceCollectionAction(Request $request)
   {
@@ -82,7 +88,8 @@ abstract class RESTControllerActions
    * POST /collection
    *
    * @param Request $request
-   * @throws HttpNotImplementedException
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function createResourceAction(Request $request)
   {
@@ -93,7 +100,8 @@ abstract class RESTControllerActions
    * DELETE /collection
    *
    * @param Request $request
-   * @throws HttpNotImplementedException
+   * @return SerializedResponse
+   * @throws HttpException
    */
   public function deleteCollectionAction(Request $request)
   {
