@@ -20,7 +20,7 @@
   },
 
   "suggest": {
-    "silex/silex": "For using the Silex utils",
+    "silex/silex": "For using the Silex utils"
   },
 
   "autoload": {
