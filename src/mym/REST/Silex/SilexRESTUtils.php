@@ -13,7 +13,7 @@ use Silex\ControllerCollection;
 class SilexRESTUtils
 {
   /**
-   * Define routes for RESTful actions on a controller
+   * Define routes for RESTful actions on a controller defined as a service
    *
    * @param $app Application|ControllerCollection
    * @param $controllerService string

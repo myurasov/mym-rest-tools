@@ -14,28 +14,19 @@ class SerializedResponse extends Response
   private $format = 'json';
   private $cacheDir = false;
   private $jsonOptions = null;
-
   private $data;
 
-  /**
-   * @var Serializer
-   */
-  private $serializer;
-
-  public function getSerializer()
+  public function createSerializer()
   {
-    if (!$this->serializer) {
+    $serializer = new Serializer();
+    $serializer->setFormat($this->format);
+    $serializer->setJsonOptions($this->jsonOptions);
 
-      $this->serializer = new Serializer();
-      $this->serializer->setFormat($this->format);
-      $this->serializer->setJsonOptions($this->jsonOptions);
-
-      if ($this->cacheDir) {
-        $this->serializer->setCacheDir($this->cacheDir);
-      }
+    if ($this->cacheDir) {
+      $serializer->setCacheDir($this->cacheDir);
     }
 
-    return $this->serializer;
+    return $serializer;
   }
 
   private function update()
@@ -55,13 +46,13 @@ class SerializedResponse extends Response
     }
 
     // content
-    $this->content = $this->getSerializer()->serialize($this->data);
+    $this->content = $this->createSerializer()->serialize($this->data);
   }
 
-  public function setData($data)
+  public function send()
   {
-    $this->data = $data;
     $this->update();
+    return parent::send();
   }
 
   //<editor-fold desc="accessors">
@@ -94,6 +85,16 @@ class SerializedResponse extends Response
   public function setFormat($format)
   {
     $this->format = $format;
+  }
+
+  public function setData($data)
+  {
+    $this->data = $data;
+  }
+
+  public function getData()
+  {
+    return $this->data;
   }
 
   //</editor-fold>
