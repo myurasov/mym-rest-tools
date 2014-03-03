@@ -29,7 +29,7 @@ class SilexRESTUtils
 
     // resource
     $app->get($path . '/{id}', $controllerService . ':getResourceAction');
-    $app->put($path . '/{id}', $controllerService . ':updateResourceAction');
+    $app->put($path . '/{id}', $controllerService . ':updateOrCreateResourceAction');
     $app->match($path . '/{id}', $controllerService . ':updateResourceAction')->method('PATCH');
     $app->delete($path . '/{id}', $controllerService . ':deleteResourceAction');
   }
