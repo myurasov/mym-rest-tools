@@ -9,8 +9,6 @@ namespace mym\REST\ORM;
 
 use Doctrine\ORM\EntityManager;
 use mym\REST\RESTController;
-use mym\REST\RESTRepositoryInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class ORMRESTController extends RESTController
 {
@@ -20,12 +18,20 @@ class ORMRESTController extends RESTController
   protected $em;
 
   /**
-   * @var RESTRepositoryInterface
+   * @var ORMRESTRepository
    */
   protected $repository;
 
   public function setOm($om)
   {
     $this->em = $this->om = $om;
+  }
+
+  protected function deleteCollection()
+  {
+    $this->repository->createQueryBuilder('resource')
+      ->delete()
+      ->getQuery()
+      ->execute();
   }
 }
