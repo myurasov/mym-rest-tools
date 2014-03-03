@@ -12,7 +12,6 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
-use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SilexRESTUtils
@@ -21,28 +20,23 @@ class SilexRESTUtils
    * Define routes for RESTful actions on a controller defined as a service
    *
    * @param $app Application|ControllerCollection
-   * @param $controllerService string
+   * @param $service string Controller service
    * @param $path string
    */
-  public static function registerRESTRoutes($app, $controllerService, $path)
+  public static function registerRESTRoutes($app, $service, $path)
   {
     // action handler
-    $actionHandler = function(Request $request, $action) use ($app, $controllerService) {
+    $actionHandler = function(Request $request, $action) use ($app, $service) {
+
       $action = $action . 'Action';
 
-      if (is_callable(array($app[$controllerService], $action))) {
-
-        // check method
-        if ($request->getMethod() !== 'POST') {
-          throw new MethodNotAllowedHttpException(array('POST'));
-        }
-
+      if (is_callable(array($app[$service], $action))) {
         // call action
-        return $app[$controllerService]->$action($request);
-
+        return call_user_func(array($app[$service], $action), $request);
       } else {
-        throw new NotFoundHttpException("Action $controllerService:$action not found");
+        throw new NotFoundHttpException("Action $service:$action not found");
       }
+
     };
 
     // actions
@@ -50,16 +44,16 @@ class SilexRESTUtils
     $app->match($path . '/{id}/{action}.action',  $actionHandler);
 
     // collection
-    $app->get($path, $controllerService . ':getCollectionAction');
-    $app->put($path, $controllerService . ':replaceCollectionAction');
-    $app->post($path, $controllerService . ':createResourceAction');
-    $app->delete($path, $controllerService . ':deleteCollectionAction');
+    $app->get($path, $service . ':getCollectionAction');
+    $app->put($path, $service . ':replaceCollectionAction');
+    $app->post($path, $service . ':createResourceAction');
+    $app->delete($path, $service . ':deleteCollectionAction');
 
     // resource
-    $app->get($path . '/{id}', $controllerService . ':getResourceAction');
-    $app->put($path . '/{id}', $controllerService . ':updateOrCreateResourceAction');
-    $app->match($path . '/{id}', $controllerService . ':updateResourceAction')->method('PATCH');
-    $app->delete($path . '/{id}', $controllerService . ':deleteResourceAction');
+    $app->get($path . '/{id}', $service . ':getResourceAction');
+    $app->put($path . '/{id}', $service . ':updateOrCreateResourceAction');
+    $app->match($path . '/{id}', $service . ':updateResourceAction')->method('PATCH');
+    $app->delete($path . '/{id}', $service . ':deleteResourceAction');
   }
 
   /**
