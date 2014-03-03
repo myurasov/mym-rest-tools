@@ -280,7 +280,7 @@ abstract class RESTController extends RESTControllerActions
     return $this->om;
   }
 
-  public function setOm($om)
+  public function setOm(ObjectManager $om)
   {
     $this->om = $om;
   }
@@ -290,12 +290,12 @@ abstract class RESTController extends RESTControllerActions
     return $this->repository;
   }
 
-  public function setRepository($repository)
+  public function setRepository(RESTRepositoryInterface $repository)
   {
     $this->repository = $repository;
   }
 
-  public function setResponse($response)
+  public function setResponse(SerializedResponse $response)
   {
     $this->response = $response;
   }

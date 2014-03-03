@@ -7,6 +7,7 @@
 
 namespace mym\REST\ODM;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ODM\MongoDB\DocumentManager;
 use mym\REST\RESTController;
 
@@ -22,7 +23,7 @@ class ODMRESTController extends RESTController
    */
   protected $repository;
 
-  public function setOm($om)
+  public function setOm(ObjectManager $om)
   {
     $this->dm = $this->om = $om;
   }

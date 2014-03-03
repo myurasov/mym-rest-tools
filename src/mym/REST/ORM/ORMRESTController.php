@@ -7,6 +7,7 @@
 
 namespace mym\REST\ORM;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use mym\REST\RESTController;
 
@@ -22,7 +23,7 @@ class ORMRESTController extends RESTController
    */
   protected $repository;
 
-  public function setOm($om)
+  public function setOm(ObjectManager $om)
   {
     $this->em = $this->om = $om;
   }
