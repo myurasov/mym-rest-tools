@@ -18,7 +18,7 @@ class RESTController extends RESTControllerActions
   protected $om;
 
   /**
-   * @var ObjectRepository
+   * @var RESTRepositoryInterface
    */
   protected $repository;
 
