@@ -34,6 +34,18 @@ abstract class RESTControllerActions
   }
 
   /**
+   * PATCH /collection/id
+   *
+   * @param Request $request
+   * @return SerializedResponse
+   * @throws HttpException
+   */
+  public function updateResourceAction(Request $request)
+  {
+    throw new HttpException(501, 'Not implemented');
+  }
+
+  /**
    * DELETE /collection/id
    *
    * @param Request $request
