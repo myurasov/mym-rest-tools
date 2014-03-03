@@ -7,12 +7,14 @@
 
 namespace mym\REST;
 
+use mym\Util\Arrays;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Tests\Common\Annotations\Ticket\Doctrine\ORM\Mapping\Entity;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-class RESTController extends RESTControllerActions
+abstract class RESTController extends RESTControllerActions
 {
   /**
    * @var ObjectManager
@@ -28,42 +30,194 @@ class RESTController extends RESTControllerActions
    * Method to get last modification date
    * @var string
    */
-  protected $modifiedDateMethodName = 'getUpdatedAt';
+  protected $modificationDateMethodName = 'getUpdatedAt';
 
   /**
    * @var SerializedResponse
    */
   protected $response;
 
+  /**
+   * Default collection output limit
+   * @var int
+   */
   protected $defaultLimit = 10;
 
+  /**
+   * Maximum collection output limit
+   * @var int
+   */
   protected $maxLimit = 100;
 
+  /**
+   * @var PropertyAccessor
+   */
+  protected $propertyAccessor;
+
+  //<editor-fold desc="actions">
+
+  /**
+   * @inheritdoc
+   */
   public function getResourceAction(Request $request)
   {
-    $res = $this->loadResource($request->attributes->get('id'), true /* required */);
-    $this->response->setData($res);
+    $resource = $this->load($request->attributes->get('id'), true /* required */);
+    $this->response->setData($resource);
 
     // set last-modified header
-    if (method_exists($res, $this->modifiedDateMethodName)) {
-      $this->response->setLastModified(call_user_func($res, $this->modifiedDateMethodName));
+    if (method_exists($resource, $this->modificationDateMethodName)) {
+      $this->response->setLastModified(call_user_func($resource, $this->modificationDateMethodName));
     }
 
     return $this->response;
   }
 
-  protected function loadResource($id, $required = true)
+  public function createResourceAction(Request $request)
   {
-    $res = $this->getRepository()->find($id);
+    // create new resource
+    $resource = $this->create();
+    $this->om->persist($resource);
 
-    if ($required && is_null($res)) {
+    // update with poseted data
+    $this->update($resource, $request->request->all());
+
+    // save
+    $this->om->flush($resource);
+
+    // return resource
+    $this->response->setData($resource);
+    return $this->response;
+  }
+
+  public function updateOrCreateResourceAction(Request $request)
+  {
+    // load existing resource
+    $resource = $this->load($request->attributes->get('id'), false /* not required */);
+
+    if (!$resource) {
+      // create new if not found
+      $resource = $this->create();
+      $this->om->persist($resource);
+    }
+
+    // update with request
+    $this->update($resource, $request->request->all());
+
+    // save
+    $this->om->flush($resource);
+
+    // return resource
+    $this->response->setData($resource);
+    return $this->response;
+  }
+
+  public function updateResourceAction(Request $request)
+  {
+    // load existing resource
+    $resource = $this->load($request->attributes->get('id'), true);
+
+    // update with request
+    $this->update($resource, $request->request->all());
+
+    // save
+    $this->om->flush($resource);
+
+    // return resource
+    $this->response->setData($resource);
+    return $this->response;
+  }
+
+  public function getCollectionAction(Request $request)
+  {
+    $this->response->setData($this->search($request));
+    return $this->response;
+  }
+
+  public function deleteResourceAction(Request $request)
+  {
+    // load existing resource
+    $resource = $this->load($request->attributes->get('id'), true);
+
+    // remove
+    $this->om->remove($resource);
+
+    // save
+    $this->om->flush($resource);
+
+    // return resource
+    $this->response->setData(array('message' => 'ok'));
+    return $this->response;
+  }
+
+  public function replaceCollectionAction(Request $request)
+  {
+    // insert new resources
+
+    $collectionData = $request->request->all();
+
+    if (is_array($collectionData)) {
+      foreach ($collectionData as $resourceData) {
+        // create
+        $resource = $this->create();
+        $this->om->persist($resource);
+
+        // update
+        $this->update($resource, $resourceData);
+      }
+    }
+
+    // delete all
+    $this->deleteCollection();
+
+    // save new
+    $this->om->flush();
+  }
+
+  //</editor-fold>
+
+  /**
+   * Delete all items in collection
+   * Changes saved to database immideately
+   */
+  abstract protected function deleteCollection();
+
+  /**
+   * Create new instance of the resource
+   *
+   * @return object
+   */
+  protected function create()
+  {
+    $className = $this->getRepository()->getClassName();
+    return new $className;
+  }
+
+  /**
+   * Load resource
+   *
+   * @param $id
+   * @param bool $required
+   * @return mixed
+   * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
+   */
+  protected function load($id, $required = true)
+  {
+    $resource = $this->getRepository()->find($id);
+
+    if ($required && is_null($resource)) {
       throw new NotFoundHttpException();
     }
 
-    return $res;
+    return $resource;
   }
 
-  public function search(Request $request)
+  /**
+   * Search resources
+   *
+   * @param Request $request
+   * @return array
+   */
+  protected function search(Request $request)
   {
     $limit = min($this->maxLimit, (int)$request->query->get('limit', $this->defaultLimit));
     $skip = min(0, (int)$request->query->get('skip', 0));
@@ -71,7 +225,52 @@ class RESTController extends RESTControllerActions
     $this->repository->setLimit($limit);
     $this->repository->setSkip($skip);
 
+    if ($request->query->has('id')) {
+
+      $ids = $request->query->get('id');
+
+      if (!is_array($ids)) {
+        throw new BadRequestHttpException();
+      }
+
+      return $this->repository->searchByIds($ids);
+    }
+
     return $this->repository->searchAll();
+  }
+
+  /**
+   * Update resource
+   *
+   * @param $resource object
+   * @param $input array
+   */
+  protected function update(&$resource, array $input)
+  {
+    $self = $this; // php 5.3 can't use $this inside closures
+
+    if (is_array($input)) {
+      Arrays::walkArray($input, function ($path, $value) use ($resource, $self) {
+            $self->updateField($resource, $path, $value);
+        });
+    }
+  }
+
+  /**
+   * Update field
+   *
+   * @param $resource object
+   * @param $path string
+   * @param $value
+   */
+  protected function updateField(&$resource, $path, $value)
+  {
+    // create property accessor
+    if (!$this->propertyAccessor) {
+      $this->propertyAccessor = new PropertyAccessor();
+    }
+
+    $this->propertyAccessor->setValue($resource, $path, $value);
   }
 
   //<editor-fold desc="accessors">
@@ -106,14 +305,14 @@ class RESTController extends RESTControllerActions
     return $this->response;
   }
 
-  public function setModifiedDateMethodName($modifiedDateMethodName)
+  public function setModificationDateMethodName($modificationDateMethodName)
   {
-    $this->modifiedDateMethodName = $modifiedDateMethodName;
+    $this->modificationDateMethodName = $modificationDateMethodName;
   }
 
-  public function getModifiedDateMethodName()
+  public function getModificationDateMethodName()
   {
-    return $this->modifiedDateMethodName;
+    return $this->modificationDateMethodName;
   }
 
   public function setMaxLimit($maxLimit)
