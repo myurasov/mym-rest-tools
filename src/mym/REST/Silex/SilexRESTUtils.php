@@ -28,9 +28,9 @@ class SilexRESTUtils
     $app->delete($path, $controllerService . ':deleteCollectionAction');
 
     // resource
-
     $app->get($path . '/{id}', $controllerService . ':getResourceAction');
     $app->put($path . '/{id}', $controllerService . ':updateResourceAction');
+    $app->match($path . '/{id}', $controllerService . ':updateResourceAction')->method('PATCH');
     $app->delete($path . '/{id}', $controllerService . ':deleteResourceAction');
   }
 
