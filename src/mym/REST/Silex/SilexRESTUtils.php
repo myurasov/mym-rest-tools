@@ -9,6 +9,11 @@ namespace mym\REST\Silex;
 
 use Silex\Application;
 use Silex\ControllerCollection;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SilexRESTUtils
 {
@@ -19,8 +24,31 @@ class SilexRESTUtils
    * @param $controllerService string
    * @param $path string
    */
-  public static function addRESTRoutes($app, $controllerService, $path)
+  public static function registerRESTRoutes($app, $controllerService, $path)
   {
+    // action handler
+    $actionHandler = function(Request $request, $action) use ($app, $controllerService) {
+      $action = $action . 'Action';
+
+      if (is_callable(array($app[$controllerService], $action))) {
+
+        // check method
+        if ($request->getMethod() !== 'POST') {
+          throw new MethodNotAllowedHttpException(array('POST'));
+        }
+
+        // call action
+        return $app[$controllerService]->$action($request);
+
+      } else {
+        throw new NotFoundHttpException("Action $controllerService:$action not found");
+      }
+    };
+
+    // actions
+    $app->match($path . '/{action}.action',  $actionHandler);
+    $app->match($path . '/{id}/{action}.action',  $actionHandler);
+
     // collection
     $app->get($path, $controllerService . ':getCollectionAction');
     $app->put($path, $controllerService . ':replaceCollectionAction');
@@ -38,7 +66,7 @@ class SilexRESTUtils
    * Adds JSON representation of exceptions
    * @param Application $app
    */
-  public static function addJSONExceptionHandler(Application $app)
+  public static function registerJSONExceptionHandler(Application $app)
   {
     $app->error(function (\Exception $e) use ($app) {
 

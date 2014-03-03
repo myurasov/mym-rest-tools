@@ -28,7 +28,7 @@ class ODMRESTController extends RESTController
     $this->dm = $this->om = $om;
   }
 
-  protected function deleteCollection()
+  protected function deleteAll()
   {
     $this->repository->createQueryBuilder()
       ->remove()

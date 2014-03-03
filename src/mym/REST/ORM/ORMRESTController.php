@@ -28,7 +28,7 @@ class ORMRESTController extends RESTController
     $this->em = $this->om = $om;
   }
 
-  protected function deleteCollection()
+  protected function deleteAll()
   {
     $this->repository->createQueryBuilder('resource')
       ->delete()
