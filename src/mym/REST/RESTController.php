@@ -114,7 +114,7 @@ abstract class RESTController extends RESTControllerActions
   public function updateResourceAction(Request $request)
   {
     // load existing resource
-    $resource = $this->load($request->attributes->get('id'), true);
+    $resource = $this->load($request->attributes->get('id'), true /* required */);
 
     // update with request
     $this->update($resource, $request->request->all());
@@ -136,7 +136,7 @@ abstract class RESTController extends RESTControllerActions
   public function deleteResourceAction(Request $request)
   {
     // load existing resource
-    $resource = $this->load($request->attributes->get('id'), true);
+    $resource = $this->load($request->attributes->get('id'), true /* required */);
 
     // remove
     $this->om->remove($resource);
