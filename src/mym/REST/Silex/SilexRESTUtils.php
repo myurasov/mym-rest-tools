@@ -12,6 +12,7 @@ use Silex\ControllerCollection;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\HttpException;
+use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SilexRESTUtils
@@ -31,8 +32,14 @@ class SilexRESTUtils
       $action = $action . 'Action';
 
       if (is_callable(array($app[$service], $action))) {
+
+        if ($request->getMethod() !== 'POST') {
+          throw new MethodNotAllowedHttpException(array('POST'));
+        }
+
         // call action
         return call_user_func(array($app[$service], $action), $request);
+
       } else {
         throw new NotFoundHttpException("Action $service:$action not found");
       }
