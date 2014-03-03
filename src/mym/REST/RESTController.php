@@ -171,6 +171,17 @@ abstract class RESTController extends RESTControllerActions
 
     // save new
     $this->om->flush();
+  public function deleteCollectionAction(Request $request)
+  {
+    $this->deleteCollection();
+
+    //
+
+    $this->response->setData(array(
+        'message' => 'ok'
+      ));
+
+    return $this->response;
   }
 
   //</editor-fold>
