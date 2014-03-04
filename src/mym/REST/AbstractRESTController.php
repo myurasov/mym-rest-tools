@@ -7,6 +7,7 @@
 
 namespace mym\REST;
 
+use mym\Auth\AbstractAuthService;
 use mym\Util\Arrays;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
@@ -53,6 +54,11 @@ abstract class AbstractRESTController extends RESTControllerActions
    * @var PropertyAccessor
    */
   protected $propertyAccessor;
+
+  /**
+   * @var AbstractAuthService
+   */
+  protected $authService;
 
   //<editor-fold desc="actions">
 
@@ -300,6 +306,19 @@ abstract class AbstractRESTController extends RESTControllerActions
     $this->propertyAccessor->setValue($resource, $path, $value);
   }
 
+  /**
+   * Loads user resource using AuthService
+   *
+   * @param Request $request
+   * @param $required
+   * @return mixed
+   */
+  protected function loadUser(Request $request, $required)
+  {
+    $userId = $this->authService->getUserIdFromRequest($request);
+    return $this->load($userId, $request);
+  }
+
   //<editor-fold desc="accessors">
 
   public function getOm()
@@ -360,6 +379,16 @@ abstract class AbstractRESTController extends RESTControllerActions
   public function getDefaultLimit()
   {
     return $this->defaultLimit;
+  }
+
+  public function setAuthService(AbstractAuthService $authService)
+  {
+    $this->authService = $authService;
+  }
+
+  public function getAuthService()
+  {
+    return $this->authService;
   }
 
   //</editor-fold>
