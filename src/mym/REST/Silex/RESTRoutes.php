@@ -1,30 +1,28 @@
 <?php
 
 /**
- * REST Utillities for Silex framework
+ * Registers routes to RESTful actions on a controller
  * @copyright 2014 Mikhail Yurasov <me@yurasov.me>
  */
 
 namespace mym\REST\Silex;
 
-use Silex\Application;
 use Silex\ControllerCollection;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Console\Application;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class SilexRESTUtils
+class RESTRoutes
 {
   /**
-   * Define routes for RESTful actions on a controller defined as a service
+   * Registers routes to RESTful actions on a controller defined as a service
    *
    * @param $app Application|ControllerCollection
    * @param $service string Controller service
    * @param $path string
    */
-  public static function registerRESTRoutes($app, $service, $path)
+  public static function register($app, $service, $path)
   {
     // action handler
     $actionHandler = function(Request $request, $action) use ($app, $service) {
@@ -62,39 +60,4 @@ class SilexRESTUtils
     $app->match($path . '/{id}', $service . ':updateResourceAction')->method('PATCH');
     $app->delete($path . '/{id}', $service . ':deleteResourceAction');
   }
-
-  /**
-   * Adds JSON representation of exceptions
-   * @param Application $app
-   */
-  public static function registerJSONExceptionHandler(Application $app)
-  {
-    $app->error(function (\Exception $e) use ($app) {
-
-        /** @var Request $request */ $request =  $app['request'];
-
-        if ($request->headers->has('accept')
-          && 0 === strpos($request->headers->get('accept'),
-            'application/json')) {
-
-          $response = new JsonResponse();
-
-          if ($e instanceof HttpException) {
-            $response->setStatusCode($e->getStatusCode());
-          } else {
-            $response->setStatusCode(500);
-          }
-
-          $response->setData(array(
-              'error' => $e->getCode(),
-              'message' => $e->getMessage()
-            ));
-
-          return $response;
-        }
-
-        return null;
-
-      });
-  }
-}
+} 
