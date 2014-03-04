@@ -1,3 +1,33 @@
+<?php
+
+/**
+ * JSON handling for Silex
+ * @copyright 2014 Mikhail Yurasov <me@yurasov.me>
+ */
+
+namespace mym\REST\Silex;
+
+use Silex\Application;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+
+class JSONUtils
+{
+  /**
+   * Parses JSON request body
+   * @param Application $app
+   */
+  public static function registerJSONRequestHandling(Application $app)
+  {
+    $app->before(function (Request $request) {
+        if (0 === strpos($request->headers->get('Content-Type'), 'application/json')) {
+          $data = json_decode($request->getContent(), true);
+          $request->request->replace(is_array($data) ? $data : array());
+        }
+      });
+  }
+
   /**
    * Adds JSON representation of exceptions
    * @param Application $app
@@ -32,3 +62,4 @@
 
       });
   }
+} 
