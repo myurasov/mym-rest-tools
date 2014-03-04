@@ -23,7 +23,8 @@
   "suggest": {
     "silex/silex": "For using the Silex utils",
     "doctrine/orm": "For ORM tools",
-    "doctrine/mongodb-odm": "For MongoDB ODM tools"
+    "doctrine/mongodb-odm": "For MongoDB ODM tools",
+    "symfony/console": ""
   },
 
   "autoload": {
