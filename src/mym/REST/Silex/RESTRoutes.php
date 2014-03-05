@@ -36,7 +36,7 @@ class RESTRoutes
         }
 
         // call action
-        return call_user_func(array($app[$service], $action), $request);
+        return call_user_func(array($app[$service], $action), $request, $app);
 
       } else {
         throw new NotFoundHttpException("Action $service:$action not found");
