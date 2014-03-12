@@ -26,6 +26,28 @@ class RESTRoutes
    */
   public static function register($app, $service, $path, $before = null, $after = null)
   {
+    static::registerRESTfulActions($app, $service, $path, $before, $after);
+    static::registerActions($app, $service, $path, $before, $after);
+  }
+
+  public static function registerRESTfulActions($app, $service, $path, $before = null, $after = null)
+  {
+    // collection
+    $app->get($path, $service . ':getCollectionAction')->before($before)->after($after);
+    $app->put($path, $service . ':replaceCollectionAction')->before($before)->after($after);
+    $app->post($path, $service . ':createResourceAction')->before($before)->after($after);
+    $app->delete($path, $service . ':deleteCollectionAction')->before($before)->after($after);
+
+    // resource
+    $app->get($path . '/{id}', $service . ':getResourceAction')->before($before)->after($after);
+    $app->put($path . '/{id}', $service . ':updateOrCreateResourceAction')->before($before)->after($after);
+    $app->match($path . '/{id}', $service . ':updateResourceAction')->method('PATCH')->before($before)->after($after);
+    $app->delete($path . '/{id}', $service . ':deleteResourceAction')->before($before)->after($after);
+  }
+
+  public static function registerActions($app, $service, $path, $before = null, $after = null)
+  {
+
     // action handler
     $actionHandler = function(Request $request, $action) use ($app, $service) {
 
@@ -42,32 +64,8 @@ class RESTRoutes
 
     };
 
-    $beforeHandler = function (Request $request) use ($before, $app) {
-      if (is_callable($before)) {
-        return call_user_func($before, $request, $app);
-      }
-    };
-
-    $afterHandler = function (Request $request) use ($after, $app) {
-      if (is_callable($after)) {
-        return call_user_func($after, $request, $app);
-      }
-    };
-
     // actions
-    $app->match($path . '/{action}.action',  $actionHandler)->before($beforeHandler)->after($afterHandler);
-    $app->match($path . '/{id}/{action}.action',  $actionHandler)->before($beforeHandler)->after($afterHandler);
-
-    // collection
-    $app->get($path, $service . ':getCollectionAction')->before($beforeHandler)->after($afterHandler);
-    $app->put($path, $service . ':replaceCollectionAction')->before($beforeHandler)->after($afterHandler);
-    $app->post($path, $service . ':createResourceAction')->before($beforeHandler)->after($afterHandler);
-    $app->delete($path, $service . ':deleteCollectionAction')->before($beforeHandler)->after($afterHandler);
-
-    // resource
-    $app->get($path . '/{id}', $service . ':getResourceAction')->before($beforeHandler)->after($afterHandler);
-    $app->put($path . '/{id}', $service . ':updateOrCreateResourceAction')->before($beforeHandler)->after($afterHandler);
-    $app->match($path . '/{id}', $service . ':updateResourceAction')->method('PATCH')->before($beforeHandler)->after($afterHandler);
-    $app->delete($path . '/{id}', $service . ':deleteResourceAction')->before($beforeHandler)->after($afterHandler);
+    $app->match($path . '/{action}.action',  $actionHandler)->before($before)->after($after);
+    $app->match($path . '/{id}/{action}.action',  $actionHandler)->before($before)->after($after);
   }
 } 
