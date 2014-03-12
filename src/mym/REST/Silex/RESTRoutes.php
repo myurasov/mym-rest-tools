@@ -26,8 +26,8 @@ class RESTRoutes
    */
   public static function register($app, $service, $path, $before = null, $after = null)
   {
-    static::registerRESTfulActions($app, $service, $path, $before, $after);
     static::registerActions($app, $service, $path, $before, $after);
+    static::registerRESTfulActions($app, $service, $path, $before, $after);
   }
 
   public static function registerRESTfulActions($app, $service, $path, $before = null, $after = null)
