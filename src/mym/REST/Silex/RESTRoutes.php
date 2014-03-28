@@ -24,28 +24,28 @@ class RESTRoutes
    * @param $before callable
    * @param $after callable
    */
-  public static function register($app, $service, $path, $before = null, $after = null)
+  public static function register($app, $service, $path)
   {
-    static::registerActions($app, $service, $path, $before, $after);
-    static::registerRESTfulActions($app, $service, $path, $before, $after);
+    static::registerActions($app, $service, $path);
+    static::registerRESTfulActions($app, $service, $path);
   }
 
-  public static function registerRESTfulActions($app, $service, $path, $before = null, $after = null)
+  public static function registerRESTfulActions($app, $service, $path)
   {
     // collection
-    $app->get($path, $service . ':getCollectionAction')->before($before)->after($after);
-    $app->put($path, $service . ':replaceCollectionAction')->before($before)->after($after);
-    $app->post($path, $service . ':createResourceAction')->before($before)->after($after);
-    $app->delete($path, $service . ':deleteCollectionAction')->before($before)->after($after);
+    $app->get($path, $service . ':getCollectionAction');
+    $app->put($path, $service . ':replaceCollectionAction');
+    $app->post($path, $service . ':createResourceAction');
+    $app->delete($path, $service . ':deleteCollectionAction');
 
     // resource
-    $app->get($path . '/{id}', $service . ':getResourceAction')->before($before)->after($after);
-    $app->put($path . '/{id}', $service . ':updateOrCreateResourceAction')->before($before)->after($after);
-    $app->match($path . '/{id}', $service . ':updateResourceAction')->method('PATCH')->before($before)->after($after);
-    $app->delete($path . '/{id}', $service . ':deleteResourceAction')->before($before)->after($after);
+    $app->get($path . '/{id}', $service . ':getResourceAction');
+    $app->put($path . '/{id}', $service . ':updateOrCreateResourceAction');
+    $app->match($path . '/{id}', $service . ':updateResourceAction')->method('PATCH');
+    $app->delete($path . '/{id}', $service . ':deleteResourceAction');
   }
 
-  public static function registerActions($app, $service, $path, $before = null, $after = null)
+  public static function registerActions($app, $service, $path)
   {
 
     // action handler
@@ -65,7 +65,7 @@ class RESTRoutes
     };
 
     // actions
-    $app->match($path . '/{action}.action',  $actionHandler)->before($before)->after($after);
-    $app->match($path . '/{id}/{action}.action',  $actionHandler)->before($before)->after($after);
+    $app->match($path . '/{action}.action',  $actionHandler);
+    $app->match($path . '/{id}/{action}.action',  $actionHandler);
   }
 } 
