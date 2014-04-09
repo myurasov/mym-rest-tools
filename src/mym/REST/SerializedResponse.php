@@ -22,7 +22,7 @@ class SerializedResponse extends Response
    */
   private $serializationVisitor;
 
-  public function createSerializer()
+  private function createSerializer()
   {
     $serializer = new Serializer();
     $serializer->setFormat($this->format);
@@ -56,10 +56,10 @@ class SerializedResponse extends Response
     $this->content = $this->createSerializer()->serialize($this->data);
   }
 
-  public function send()
+  public function setData($data)
   {
+    $this->data = $data;
     $this->update();
-    return parent::send();
   }
 
   //<editor-fold desc="accessors">
@@ -92,11 +92,6 @@ class SerializedResponse extends Response
   public function setFormat($format)
   {
     $this->format = $format;
-  }
-
-  public function setData($data)
-  {
-    $this->data = $data;
   }
 
   public function getData()
