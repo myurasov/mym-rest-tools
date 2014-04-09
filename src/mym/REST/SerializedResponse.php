@@ -27,6 +27,7 @@ class SerializedResponse extends Response
     $serializer = new Serializer();
     $serializer->setFormat($this->format);
     $serializer->setJsonOptions($this->jsonOptions);
+    $serializer->setSerializationVisitor($this->serializationVisitor);
 
     if ($this->cacheDir) {
       $serializer->setCacheDir($this->cacheDir);
