@@ -12,6 +12,7 @@ use JMS\Serializer\Naming\IdenticalPropertyNamingStrategy;
 use JMS\Serializer\Naming\SerializedNameAnnotationStrategy;
 use JMS\Serializer\Serializer as JMSSerializer;
 use JMS\Serializer\SerializerBuilder;
+use JMS\Serializer\VisitorInterface;
 use JMS\Serializer\XmlSerializationVisitor;
 
 class Serializer
@@ -26,31 +27,49 @@ class Serializer
   private $debug = false;
   private $jsonOptions = null;
 
+  /**
+   * @var VisitorInterface
+   */
+  private $serializationVisitor;
+
   private function createSerializer()
   {
     $sb = SerializerBuilder::create();
 
-    // set format
-    if ('json' === $this->format) {
+    if ($this->serializationVisitor) {
+
+      $sb->setSerializationVisitor($this->format, $this->serializationVisitor);
+
+    } else {
+
+      // set format
+      if ('json' === $this->format) {
 
         $sv =  new JsonSerializationVisitor(
-          /* save original name or annotated one  */
+        /* save original name or annotated one  */
           new SerializedNameAnnotationStrategy(
             new IdenticalPropertyNamingStrategy()
           )
         );
 
-      $sv->setOptions($this->jsonOptions);
-      $sb->setSerializationVisitor("json", $sv);
+        $sv->setOptions($this->jsonOptions);
+        $sb->setSerializationVisitor($this->format, $sv);
 
-    } else if ('xml' === $this->format) {
+      } else if ('xml' === $this->format) {
 
-      $sb->setSerializationVisitor("xml", new XmlSerializationVisitor(
-        /* save original name or annotated one  */
-        new SerializedNameAnnotationStrategy(
-          new IdenticalPropertyNamingStrategy()
-        )
-      ));
+        $sb->setSerializationVisitor('xml', new XmlSerializationVisitor(
+          /* save original name or annotated one  */
+          new SerializedNameAnnotationStrategy(
+            new IdenticalPropertyNamingStrategy()
+          )
+        ));
+
+      } else {
+
+        throw new \Exception('Format "' .  $this->format . '"is not supported and serializationVisitor is not net');
+
+      }
+
     }
 
     // chache dir
@@ -121,5 +140,15 @@ class Serializer
   public function setJsonOptions($jsonOptions)
   {
     $this->jsonOptions = $jsonOptions;
+  }
+
+  public function setSerializationVisitor($serializationVisitor)
+  {
+    $this->serializationVisitor = $serializationVisitor;
+  }
+
+  public function getSerializationVisitor()
+  {
+    return $this->serializationVisitor;
   }
 }

@@ -7,6 +7,7 @@
 
 namespace mym\REST;
 
+use JMS\Serializer\VisitorInterface;
 use Symfony\Component\HttpFoundation\Response;
 
 class SerializedResponse extends Response
@@ -15,6 +16,11 @@ class SerializedResponse extends Response
   private $cacheDir = false;
   private $jsonOptions = null;
   private $data;
+
+  /**
+   * @var VisitorInterface
+   */
+  private $serializationVisitor;
 
   public function createSerializer()
   {
@@ -95,6 +101,16 @@ class SerializedResponse extends Response
   public function getData()
   {
     return $this->data;
+  }
+
+  public function setSerializationVisitor($serializationVisitor)
+  {
+    $this->serializationVisitor = $serializationVisitor;
+  }
+
+  public function getSerializationVisitor()
+  {
+    return $this->serializationVisitor;
   }
 
   //</editor-fold>
