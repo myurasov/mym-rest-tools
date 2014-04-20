@@ -72,7 +72,7 @@ abstract class AbstractRESTController extends RESTControllerActions
 
     // set last-modified header
     if (method_exists($resource, $this->modificationDateMethodName)) {
-      $this->response->setLastModified(call_user_func($resource, $this->modificationDateMethodName));
+      $this->response->setLastModified(call_user_func(array($resource, $this->modificationDateMethodName)));
     }
 
     // return resource
