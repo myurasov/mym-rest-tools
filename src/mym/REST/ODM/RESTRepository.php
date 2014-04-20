@@ -21,7 +21,8 @@ class RESTRepository extends DocumentRepository implements RESTRepositoryInterfa
       ->skip($this->skip)
       ->limit($this->limit)
       ->getQuery()
-      ->execute();
+      ->execute()
+      ->toArray();
   }
 
   public function searchByIds($ids = array())
@@ -30,7 +31,9 @@ class RESTRepository extends DocumentRepository implements RESTRepositoryInterfa
       ->limit($this->limit)
       ->skip($this->skip)
       ->field('id')->in($ids)
-      ->getQuery()->execute();
+      ->getQuery()
+      ->execute()
+      ->toArray();
   }
 
   public function setLimit($limit)
