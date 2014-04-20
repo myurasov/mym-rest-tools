@@ -19,7 +19,7 @@ class RESTController extends AbstractRESTController
   protected $dm;
 
   /**
-   * @var ODMRESTRepository
+   * @var RESTRepository
    */
   protected $repository;
 
