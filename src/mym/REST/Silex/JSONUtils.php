@@ -46,6 +46,7 @@ class JSONUtils
 
           if ($e instanceof HttpException) {
             $response->setStatusCode($e->getStatusCode());
+            $response->headers->add($e->getHeaders());
           } else {
             $response->setStatusCode(500);
           }
