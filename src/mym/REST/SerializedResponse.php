@@ -16,6 +16,7 @@ class SerializedResponse extends Response
   private $cacheDir = false;
   private $jsonOptions = null;
   private $data;
+  private $debug = false;
 
   /**
    * @var VisitorInterface
@@ -28,6 +29,7 @@ class SerializedResponse extends Response
     $serializer->setFormat($this->format);
     $serializer->setJsonOptions($this->jsonOptions);
     $serializer->setSerializationVisitor($this->serializationVisitor);
+    $serializer->setDebug($this->debug);
 
     if ($this->cacheDir) {
       $serializer->setCacheDir($this->cacheDir);
@@ -107,6 +109,16 @@ class SerializedResponse extends Response
   public function getSerializationVisitor()
   {
     return $this->serializationVisitor;
+  }
+
+  public function setDebug($debug)
+  {
+    $this->debug = $debug;
+  }
+
+  public function getDebug()
+  {
+    return $this->debug;
   }
 
   //</editor-fold>
