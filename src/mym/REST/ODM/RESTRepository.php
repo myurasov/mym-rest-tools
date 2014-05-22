@@ -22,7 +22,7 @@ class RESTRepository extends DocumentRepository implements RESTRepositoryInterfa
       ->limit($this->limit)
       ->getQuery()
       ->execute()
-      ->toArray();
+      ->toArray(false /* use indexed arrays */);
   }
 
   public function searchByIds($ids = array())
@@ -33,7 +33,7 @@ class RESTRepository extends DocumentRepository implements RESTRepositoryInterfa
       ->field('id')->in($ids)
       ->getQuery()
       ->execute()
-      ->toArray();
+      ->toArray(false /* use indexed arrays */);
   }
 
   public function setLimit($limit)
