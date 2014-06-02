@@ -267,6 +267,7 @@ abstract class AbstractRESTController extends RESTControllerActions
    * Search resources
    *
    * @param Request $request
+   * @throws \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
    * @return array
    */
   protected function search(Request $request)
