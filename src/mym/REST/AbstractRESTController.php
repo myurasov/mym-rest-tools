@@ -130,8 +130,19 @@ abstract class AbstractRESTController extends RESTControllerActions
     return $this->response;
   }
 
+  /**
+   * Get collection
+   * Limit/skip are set on repository
+   *
+   * ?limit
+   * ?skip
+   *
+   * @param Request $request
+   * @return SerializedResponse
+   */
   public function getCollection(Request $request)
   {
+    $this->setLimits($request);
     $this->response->setData($this->search($request));
     return $this->response;
   }
@@ -240,6 +251,19 @@ abstract class AbstractRESTController extends RESTControllerActions
   }
 
   /**
+   * Sets skip/limit on repository from query parameters
+   * @param Request $request
+   */
+  protected function setLimits(Request $request)
+  {
+    $limit = min($this->maxLimit, $request->query->getInt('limit', $this->defaultLimit));
+    $skip = min(0, $request->query->getInt('skip', 0));
+
+    $this->repository->setLimit($limit);
+    $this->repository->setSkip($skip);
+  }
+
+  /**
    * Search resources
    *
    * @param Request $request
@@ -247,12 +271,6 @@ abstract class AbstractRESTController extends RESTControllerActions
    */
   protected function search(Request $request)
   {
-    $limit = min($this->maxLimit, (int)$request->query->get('limit', $this->defaultLimit));
-    $skip = min(0, (int)$request->query->get('skip', 0));
-
-    $this->repository->setLimit($limit);
-    $this->repository->setSkip($skip);
-
     if ($request->query->has('id')) {
 
       $ids = $request->query->get('id');
