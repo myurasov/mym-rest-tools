@@ -7,7 +7,6 @@
 
 namespace mym\REST\Silex;
 
-use mym\REST\SerializedResponse;
 use Silex\ControllerCollection;
 use Symfony\Component\Console\Application;
 use Symfony\Component\HttpFoundation\Request;
