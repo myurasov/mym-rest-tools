@@ -2,7 +2,7 @@
 
 /**
  * Registers routes to RESTful actions on a controller
- * @copyright 2014 Mikhail Yurasov <me@yurasov.me>
+ * @copyright 2014-2015 Mikhail Yurasov <me@yurasov.me>
  */
 
 namespace mym\REST\Silex;
@@ -12,7 +12,7 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
-class RESTRoutes
+class RestfulRoutes
 {
   /**
    * Registers routes to RESTful actions on a controller defined as a service
