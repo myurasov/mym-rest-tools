@@ -17,14 +17,15 @@ class JsonExceptionHandler
 {
   /**
    * @param Application $app
+   * @param bool $force
    */
-  public static function register(Application $app)
+  public static function register(Application $app, $force = false)
   {
-    $app->error(function (\Exception $e) use ($app) {
+    $app->error(function (\Exception $e) use ($app, $force) {
 
       /** @var Request $request */ $request =  $app['request'];
 
-      if ($request->headers->has('accept')
+      if ($force || $request->headers->has('accept')
           && 0 === strpos($request->headers->get('accept'),
                           'application/json')) {
 
