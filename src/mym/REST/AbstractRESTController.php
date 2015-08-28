@@ -7,7 +7,6 @@
 
 namespace mym\REST;
 
-use mym\Auth\AbstractAuthService;
 use mym\Util\Arrays;
 use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\HttpFoundation\Request;
